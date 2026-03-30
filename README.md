@@ -1,1 +1,1 @@
-Accepted By ISBI2026.
+Accepted By ISBI2026 Oral.
