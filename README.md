@@ -3,7 +3,7 @@
 Official implementation of **SA-UNetv2**, a lightweight and high-precision deep learning model for retinal vessel segmentation. This work has been accepted as an **Oral Presentation** at **ISBI 2026**.
 
 [![Project Page](https://img.shields.io/badge/Project-Page-blue)](https://clguo.github.io/SA-UNetv2)
-[![Paper](https://img.shields.io/badge/Paper-arXiv-red)](https://arxiv.org/abs/...)
+[![Paper](https://img.shields.io/badge/Paper-arXiv-red)](https://arxiv.org/abs/2509.11774)
 
 ## 🚀 Highlights
 SA-UNetv2 improves upon the original SA-UNet by addressing class imbalance and multi-scale feature fusion gaps. It is designed for clinical deployment in resource-constrained, CPU-only environments.
