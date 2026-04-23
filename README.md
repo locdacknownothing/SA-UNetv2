@@ -27,23 +27,6 @@ Comparison on the DRIVE dataset (Without FOV Masking):
 | SA-UNet (ICPR'20) | 82.44 | 70.15 | 80.85 | 0.54 | 1.12 |
 | **SA-UNetv2 (Ours)** | **82.82** | **70.69** | **81.27** | **0.26** | **0.95** |
 
-## 📦 Installation
-```bash
-git clone https://github.com/clguo/SA-UNetv2.git
-cd SA-UNetv2
-pip install -r requirements.txt
-```
-
-## 💻 Usage
-### Training
-```bash
-python train.py --dataset DRIVE --epochs 150 --batch_size 8
-```
-
-### Evaluation
-```bash
-python test.py --model_path ./checkpoints/saunetv2.h5 --dataset DRIVE
-```
 
 ## 📝 Citation
 If you find this work or code helpful, please cite our paper:
