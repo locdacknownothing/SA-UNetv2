@@ -73,8 +73,8 @@ if __name__ == "__main__":
         testing_label_loc,
     )
 
-    x_test = test_data.astype('float32') / 255.
-    y_test = test_label.astype('float32') / 255.
+    x_test = np.array(test_data, dtype=np.float32) / 255.
+    y_test = np.array(test_label, dtype=np.float32) / 255.
 
     print('x_test shape:', x_test.shape)
     print('y_test shape:', y_test.shape)

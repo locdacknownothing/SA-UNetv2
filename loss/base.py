@@ -4,13 +4,13 @@ from tensorflow import keras
 import tensorflow.keras.backend as K
 
 
-def dice_loss(y_true, y_pred, smooth=1e-6):
+def dice_loss(y_true, y_pred, smooth=K.epsilon()):
     intersection = tf.reduce_sum(y_true * y_pred)
     union = tf.reduce_sum(y_true) + tf.reduce_sum(y_pred)
     loss = 1 - (2. * intersection + smooth) / (union + smooth)
     return loss
 
-def jaccard_loss(y_true, y_pred, smooth=1e-6):
+def jaccard_loss(y_true, y_pred, smooth=K.epsilon()):
     """Jaccard Loss (Intersection over Union) for binary segmentation."""
     intersection = tf.reduce_sum(y_true * y_pred)
     union = tf.reduce_sum(y_true) + tf.reduce_sum(y_pred) - intersection
@@ -57,14 +57,3 @@ class MCC_Loss(keras.losses.Loss):
         # MCC loss: 1 - MCC
         mcc = numerator / (denominator + K.epsilon())  # Adding epsilon to avoid divide by zero
         return 1 - mcc  # We return 1 - MCC because we are minimizing the loss
-
-
-def combined_loss(y_true, y_pred, alpha=0.5):
-    bce = keras.losses.binary_crossentropy(y_true, y_pred)
-    dice = dice_loss(y_true, y_pred)
-    jaccard = jaccard_loss(y_true, y_pred)
-    ssim = ssim_loss(y_true, y_pred)
-    smoothness = gradient_regularizer(y_pred)
-    mcc = MCC_Loss()(y_true, y_pred) 
-    
-    return alpha * bce + (1 - alpha) * mcc

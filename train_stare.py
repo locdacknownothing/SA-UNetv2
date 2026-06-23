@@ -74,9 +74,11 @@ if __name__ == "__main__":
 
     # Step 1: Get max shape from training set
     train_max_h, train_max_w = get_max_shape(train_image_dir)
-    target_h = round_up_to_multiple(train_max_h, 8)
-    target_w = round_up_to_multiple(train_max_w, 8)
-    target_shape = (target_h, target_w)
+    # target_h = round_up_to_multiple(train_max_h, 8)
+    # target_w = round_up_to_multiple(train_max_w, 8)
+    # target_shape = (target_h, target_w)
+    desired_size = round_up_to_multiple(max(train_max_h, train_max_w), 8)
+    target_shape = (desired_size, desired_size)
 
     print(f"Max train image size: ({train_max_h}, {train_max_w}) -> Padded to: {target_shape}")
 
@@ -93,7 +95,7 @@ if __name__ == "__main__":
     print('x_val shape:', x_val.shape)
     print('y_val shape:', y_val.shape)
 
-    desired_size = 704
+    # desired_size = 704
     model = SA_UNetV2(
         input_size=(desired_size, desired_size, 3),
         block_size=7,
