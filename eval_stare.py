@@ -8,7 +8,7 @@ from tensorflow import keras
 from tensorflow.keras import backend as K
 from sklearn.metrics import confusion_matrix, accuracy_score, recall_score, roc_auc_score, matthews_corrcoef, f1_score, jaccard_score
 
-from util import restore_images
+# from util import pad_images, restore_images
 from sa_unet import SA_UNetV2
 
 
@@ -16,8 +16,8 @@ weight = "STARE/Model/SA_UNetv2.h5"
 save_dir = 'STARE/SA_UNetv2/save_dir'  # Path of the folder where you want to save files
 os.makedirs(save_dir, exist_ok=True)  # Automatically create the directory if it does not exist
 
-groundtruth_dir = 'STARE/SA_UNetv2/groundtruth_dir'  # Path of the folder for saving ground truth
-os.makedirs(groundtruth_dir, exist_ok=True)  # Automatically create the directory if it does not exist
+# groundtruth_dir = 'STARE/SA_UNetv2/groundtruth_dir'  # Path of the folder for saving ground truth
+# os.makedirs(groundtruth_dir, exist_ok=True)  # Automatically create the directory if it does not exist
 
 
 def get_data_label_from_files(test_files, testing_images_loc, testing_label_loc):

@@ -1,3 +1,15 @@
+import tensorflow as tf
+
+# Configure TensorFlow session for dynamic GPU memory allocation
+gpus = tf.config.list_physical_devices('GPU')
+
+if gpus:
+    try:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+    except RuntimeError as e:
+        print(e)
+        
 import os
 from pathlib import Path
 
@@ -57,8 +69,8 @@ def load_stare_data(image_dir, label_dir, target_shape):
 
 if __name__ == "__main__":
     data_location = ""
-    train_image_dir = data_location + 'STARE/train_aug/images/'
-    train_label_dir = data_location + 'STARE/train_aug/labels/'
+    train_image_dir = data_location + 'STARE/train/images/'
+    train_label_dir = data_location + 'STARE/train/labels/'
 
     # Step 1: Get max shape from training set
     train_max_h, train_max_w = get_max_shape(train_image_dir)
