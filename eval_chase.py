@@ -12,11 +12,11 @@ from util import pad_images, restore_images
 from sa_unet import SA_UNetV2
 
 
-weight = "DRIVE/Model/SA_UNetv2.h5"
-save_dir = 'DRIVE/SA_UNetv2/save_dir'  # Path of the folder where you want to save files
+weight = "CHASE/Model/SA_UNetv2.h5"
+save_dir = 'CHASE/SA_UNetv2/save_dir'  # Path of the folder where you want to save files
 os.makedirs(save_dir, exist_ok=True)  # Automatically create the directory if it does not exist
 
-# groundtruth_dir = 'DRIVE/SA_UNetv2/groundtruth_dir'  # Path of the folder for saving ground truth
+# groundtruth_dir = 'CHASE/SA_UNetv2/groundtruth_dir'  # Path of the folder for saving ground truth
 # os.makedirs(groundtruth_dir, exist_ok=True)  # Automatically create the directory if it does not exist
 
 # with_mask = False
@@ -25,12 +25,18 @@ os.makedirs(save_dir, exist_ok=True)  # Automatically create the directory if it
 def get_data_label_from_files(test_files, testing_images_loc, testing_label_loc):
     test_data = []
     test_label = []
+
+    # sample_data_names = ["Image_11L.jpg"]
+    # sample_label_names = ["Image_11L_1stHO.png"]
+    
     for i in test_files:
         im = imageio.imread(testing_images_loc + i)
-        label = imageio.imread(testing_label_loc + i.split('_')[0] + '_manual1.png')
-        test_data.append(cv2.resize(im, (565, 584)))
-        temp = cv2.resize(label, (565, 584))
-        _, temp = cv2.threshold(temp, 127, 255, cv2.THRESH_BINARY)
+        label = imageio.imread(testing_label_loc + i.split('.')[0] + '_1stHO.png', mode="L")
+        assert im.shape[:2] == (960, 999), im.shape
+        assert label.shape[:2] == (960, 999), label.shape
+        
+        test_data.append(im)
+        _, temp = cv2.threshold(label, 127, 255, cv2.THRESH_BINARY)
         test_label.append(temp)
     test_data = np.array(test_data)
     test_label = np.array(test_label)
@@ -50,8 +56,8 @@ def get_data_label_from_files(test_files, testing_images_loc, testing_label_loc)
 #         mask = imageio.imread(mask_loc + i.split('.')[0] + '_mask.gif')
 #         mask_label.append(mask)
 
-#         test_data.append(cv2.resize(im, (565, 584)))
-#         temp = cv2.resize(label, (565, 584))
+#         test_data.append(cv2.resize(im, (960, 999)))
+#         temp = cv2.resize(label, (960, 999))
 #         _, temp = cv2.threshold(temp, 127, 255, cv2.THRESH_BINARY)
 #         test_label.append(temp)    
 
@@ -64,8 +70,8 @@ def get_data_label_from_files(test_files, testing_images_loc, testing_label_loc)
 
 if __name__ == "__main__":
     data_location = ""
-    testing_images_loc = data_location + 'DRIVE/test/images/'
-    testing_label_loc = data_location + 'DRIVE/test/labels/'
+    testing_images_loc = data_location + 'CHASE/test/image/'
+    testing_label_loc = data_location + 'CHASE/test/label/'
     test_files = os.listdir(testing_images_loc)
 
     test_data, test_label = get_data_label_from_files(
@@ -77,7 +83,10 @@ if __name__ == "__main__":
     x_test = test_data.astype('float32') / 255.
     y_test = test_label.astype('float32') / 255.
 
-    desired_size = 592
+    print('x_test shape:', x_test.shape)
+    print('y_test shape:', y_test.shape)
+
+    desired_size = 1008
     model = SA_UNetV2(
         input_size=(desired_size, desired_size, 3),
         block_size=7,
@@ -89,7 +98,7 @@ if __name__ == "__main__":
 
     x_test_padded = pad_images(x_test,(len(x_test), desired_size, desired_size, 3))
     y_pred = model.predict(x_test_padded, batch_size=1)
-    y_pred= restore_images(y_pred, (len(y_pred),584,565,1))
+    y_pred= restore_images(y_pred, y_test.shape)
 
     # Initialize lists
     accuracy_scores = []

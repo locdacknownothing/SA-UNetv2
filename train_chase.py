@@ -27,7 +27,7 @@ from sa_unet import SA_UNetV2
 from loss import combined_loss
 
 
-weight = "DRIVE/Model/SA_UNetv2.h5"
+weight = "CHASE/Model/SA_UNetv2.h5"
 restore = False
 
 
@@ -35,15 +35,18 @@ def get_data_label_from_files(files, images_loc, label_loc, desired_size):
     data = []
     labels = []
 
+    # sample_data_names = ["hImage_01L.jpg", "randomGaussian0Image_04R.jpg"]
+    # sample_label_names = ["hImage_01L_1stHO.png", "randomGaussian0Image_04R_1stHO.png"]
+
     for i in files:
         im = imageio.imread(images_loc + i)
         # print(im.shape)
-        im_reshaped = np.reshape(im, (1, 584, 565, 3))
+        im_reshaped = np.reshape(im, (1, *im.shape[:2], 3))
         new_im = pad_images(im_reshaped, (1,desired_size,desired_size,3))
         new_im = np.reshape(new_im, (desired_size, desired_size, 3))
-        label = imageio.imread(label_loc + i.split('_')[0] + '_manual1.png', mode='L')
+        label = imageio.imread(label_loc + i.split('.')[0] + '_1stHO.png', mode='L')
         # print(label.shape)
-        label_reshaped = np.reshape(label, (1, 584, 565, 1))
+        label_reshaped = np.reshape(label, (1, *im.shape[:2], 1))
         new_label = pad_images(label_reshaped, (1,desired_size,desired_size,1))
         new_label =  np.reshape(new_label, (desired_size, desired_size, 1))
         data.append(cv2.resize(new_im, (desired_size, desired_size)))
@@ -56,14 +59,14 @@ def get_data_label_from_files(files, images_loc, label_loc, desired_size):
 
 if __name__ == "__main__":
     data_location = ""
-    training_images_loc = data_location + 'DRIVE/train_aug/images/'
-    training_label_loc = data_location + 'DRIVE/train_aug/labels/'
+    training_images_loc = data_location + 'CHASE/train/image/'
+    training_label_loc = data_location + 'CHASE/train/label/'
 
-    validate_images_loc = data_location + 'DRIVE/validate/images/'
-    validate_label_loc = data_location + 'DRIVE/validate/labels/'
+    validate_images_loc = data_location + 'CHASE/validate/images/'
+    validate_label_loc = data_location + 'CHASE/validate/labels/'
     train_files = os.listdir(training_images_loc)
     validate_files = os.listdir(validate_images_loc)
-    desired_size=592
+    desired_size=1008
 
     train_data, train_label = get_data_label_from_files(
         train_files, 
@@ -88,7 +91,7 @@ if __name__ == "__main__":
     print('y_train shape:', y_train.shape)
     print('x_validate shape:', x_validate.shape)
     print('y_validate shape:', y_validate.shape)
-    
+
     model = SA_UNetV2(
         input_size=(desired_size, desired_size, 3),
         block_size=7,
@@ -102,7 +105,7 @@ if __name__ == "__main__":
     )
 
     model.summary()
-    # Calculate FLOPs (using 1 sample as input, shape = 592x592x3)
+    # Calculate FLOPs (using 1 sample as input, shape = desired_size x desired_size x 3)
     flops = get_flops(model, batch_size=1)
     print(f"GFLOPs: {flops / 1e9:.3f} GFLOPs")
 
@@ -146,7 +149,7 @@ if __name__ == "__main__":
     history = model.fit(
         x_train, y_train,
         epochs=150,
-        batch_size=8,
+        batch_size=4,
         validation_data=(x_validate, y_validate),
         shuffle=True,
         callbacks=callbacks  # use the configured callback list
