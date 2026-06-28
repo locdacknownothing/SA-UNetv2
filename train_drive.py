@@ -27,8 +27,10 @@ from sa_unet import SA_UNetV2
 from loss import combined_loss
 
 
-weight = "DRIVE/Model/SA_UNetv2.h5"
-restore = False
+weight = "DRIVE/Model/SA_UNetv2_dice_cldice.h5"
+restore = True  # False
+lr = 1e-5  # 1e-3
+epochs = 50  # 150
 
 
 def get_data_label_from_files(files, images_loc, label_loc, desired_size):
@@ -96,7 +98,7 @@ if __name__ == "__main__":
         start_neurons=16,
     )
     model.compile(
-        optimizer=Adam(learning_rate=1e-3),
+        optimizer=Adam(learning_rate=lr),
         loss=combined_loss,
         metrics=['accuracy']
     )
@@ -129,7 +131,7 @@ if __name__ == "__main__":
             monitor='val_loss',
             factor=0.5,       # learning rate reduction factor
             patience=10,      # wait for 10 epochs without improvement
-            min_lr=1e-6,      # minimum learning rate
+            min_lr=1e-8,      # minimum learning rate
             verbose=1
         ),
         
@@ -145,7 +147,7 @@ if __name__ == "__main__":
     # Start training
     history = model.fit(
         x_train, y_train,
-        epochs=150,
+        epochs=epochs,
         batch_size=8,
         validation_data=(x_validate, y_validate),
         shuffle=True,

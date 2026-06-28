@@ -23,5 +23,5 @@ def combined_loss(y_true, y_pred, alpha=0.5):
     
     cl_dice = cl_dice_loss(y_true, y_pred)
     
-    return alpha * bce + (1 - alpha) * mcc
-    # return alpha * dice + (1 - alpha) * cl_dice
+    # return alpha * bce + (1 - alpha) * mcc
+    return alpha * dice + (1 - alpha) * cl_dice
